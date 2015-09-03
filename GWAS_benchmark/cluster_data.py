@@ -7,8 +7,11 @@ from pysnptools.snpreader import Bed
 import os.path
 import pylab
 import scipy.cluster.hierarchy as sch
-import fastcluster as fc
 import logging
+try:
+    import fastcluster as fc
+except:
+    logging.warn("to use fastcluster must 'pip install fastcluster")
 
 
 

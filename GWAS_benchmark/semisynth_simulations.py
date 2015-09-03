@@ -302,7 +302,7 @@ def generate_phenotype(snp_data, causals, genetic_var, noise_var, seed=None):
     X.flags.writeable = False
     X_causal = X[:,causal_idx]
     X_causal = 1./np.sqrt(X_causal.shape[1]) * X_causal
-    W = np.random.randn(num_causal, num_phenotypes) * np.sqrt(genetic_var) + mean
+    W = np.random.randn(num_causal, num_phenotypes) * np.sqrt(genetic_var) + mean #Weight of each causal SNP
     XW = np.dot(X_causal, W)
     noise_std = np.sqrt(noise_var)
     Z = noise_std*sp.randn(X_causal.shape[0], num_phenotypes)
@@ -498,7 +498,7 @@ def compute_core_ascertained(input_tuple):
     test_idx = np.concatenate((chr1_idx, chr2_idx))
     
     if seed is not None:
-        np.random.seed(seed)
+        np.random.seed(int(seed % sys.maxint))
     
     causal_idx = np.random.permutation(causal_candidates_idx)[0:num_causal]
     

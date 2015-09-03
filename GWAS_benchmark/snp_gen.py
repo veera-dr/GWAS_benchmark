@@ -8,14 +8,14 @@ from pysnptools.snpreader import SnpData, Bed, Dat
 
 
 
-def snp_gen(fst, dfr, iid_count, sid_count, maf_low=.05, maf_high=.5, seed=0,sibs_per_family=10,freq_pop_0=.5,chr_count=None):
+def snp_gen(fst, dfr, iid_count, sid_count, maf_low=.05, maf_high=.5, seed=0, sibs_per_family=10, freq_pop_0=.5, chr_count=None, label_with_pop=False):
     """Generates a random :class:`.SnpData`
 
     :param fst: Degree of Population Structure, e.g. 0 (a special case), 0.005, 0.01, 0.05, 0.1
     :type fst: float
 
-    :param dft: Degree of Family Relatedness, the fraction of individuals belonging to a family, ie. fracSibs, e.g. 0.0, 0.5, 0.6, 0.7, 0.8, 0.9
-    :type dft: float
+    :param dfr: Degree of Family Relatedness, the fraction of individuals belonging to a family, ie. fracSibs, e.g. 0.0, 0.5, 0.6, 0.7, 0.8, 0.9
+    :type dfr: float
 
     :param iid_count: The number of individuals to generate. Because of rounding the actual number may be less.
     :type iid_count: int
@@ -66,14 +66,21 @@ def snp_gen(fst, dfr, iid_count, sid_count, maf_low=.05, maf_high=.5, seed=0,sib
         logging.info("Simulating SNPs from a population %i" % population_index)
         snps_parents=_generate_snps(ancestral, fst, int(iid_solo_count*freq_pop), sid_count)
         snp_list.append(snps_parents)
-
         snp_list.append(_generate_kids(parent_snps=snps_parents, family_count=int(freq_pop*family_count), sibs_per_family=sibs_per_family))
 
     snp_list.append(_generate_kids(parent_snps=np.concatenate(snp_list), family_count=family_count, sibs_per_family=sibs_per_family))
     val = np.concatenate(snp_list)
 
-    iid = np.array([["i_{0}".format(iid_index),"f_{0}".format(iid_index)] for iid_index in xrange(val.shape[0])])
-    sid = np.array(["snp_{0}".format(sid_index) for sid_index in xrange(val.shape[1])])
+    if not label_with_pop:
+        iid = np.array([["i_{0}".format(iid_index),"f_{0}".format(iid_index)] for iid_index in xrange(val.shape[0])],dtype=str).reshape(-1,2)
+    else:
+        assert len(snp_list) == 5, "real assert"
+        iid0 = [["0",str(iid_index)] for iid_index in xrange(len(snp_list[0])+len(snp_list[1]))] #parents and children of pop 0
+        iid1 = [["1",str(iid_index)] for iid_index in xrange(len(snp_list[2])+len(snp_list[3]))] #parents and children of pop 1
+        iid2 = [["2",str(iid_index)] for iid_index in xrange(len(snp_list[4]))]                  #children with parents in any pop
+        iid = np.array(iid0+iid1+iid2,dtype=str).reshape(-1,2)
+
+    sid = np.array(["snp_{0}".format(sid_index) for sid_index in xrange(val.shape[1])],dtype=str)
 
     if chr_count is None:
         chr_count = len(sid)
@@ -84,7 +91,7 @@ def snp_gen(fst, dfr, iid_count, sid_count, maf_low=.05, maf_high=.5, seed=0,sib
     if len(sid) == 0: #make it work when no sids are wanted
         pos = pos.reshape(len(sid),3)
 
-    snpdata = SnpData(iid, sid, pos, val, 
+    snpdata = SnpData(iid=iid, sid=sid, val=val, pos=pos,
                       parent_string="snp_gen(fst={0}, dfr={1}, iid_count={2}, sid_count={3}, maf_low={4}, maf_high={5}, seed={6}, sibs_per_family={7}, freq_pop_0={8})"
                       .format(fst, dfr, iid_count, sid_count, maf_low, maf_high, seed, sibs_per_family, freq_pop_0)
                       )
@@ -94,6 +101,12 @@ def snp_gen(fst, dfr, iid_count, sid_count, maf_low=.05, maf_high=.5, seed=0,sib
 
     return snpdata
 
+def beta_mode(a,f): #!!!
+    alpha,beta = ((a*(1.0-f)/f,(1.0-a)*(1.0-f)/f))
+    print alpha,beta
+    mean = alpha/(alpha+beta)
+    var = alpha * beta / ((alpha+beta)**2 * (alpha+beta+1))
+    return mean, var**.5
 
 def _generate_snps(ancestral, fst, iid_count, sid_count):
     """

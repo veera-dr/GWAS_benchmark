@@ -6,7 +6,7 @@
     <ProjectGuid>{6b56c9c9-acef-4dc7-831e-e957b1a9f186}</ProjectGuid>
     <ProjectHome />
     <StartupFile>tests\test_semisynth.py</StartupFile>
-    <SearchPath>..;..\..\pysnptools;..\..\fastlmm</SearchPath>
+    <SearchPath>..;..\..\pysnptools;..\..\fastlmm2</SearchPath>
     <WorkingDirectory>..</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
