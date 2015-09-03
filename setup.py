@@ -11,7 +11,7 @@ from setuptools import setup, Extension
 import numpy
 
 # Version number
-version = '0.1.2'
+version = '0.1.3'
 
 
 def readme():
@@ -33,6 +33,6 @@ setup(
         "GWAS_benchmark/tests",
         "GWAS_benchmark",
 	],
-    install_requires = ['numpy', 'scipy', 'pandas', 'scikit-learn', 'matplotlib', 'pysnptools', 'fastlmm', 'fastcluster'],
+    install_requires = ['scipy>=0.15.1', 'numpy>=1.9.2', 'pandas>=0.16.2', 'matplotlib>=1.4.3', 'scikit-learn>=0.16.1', 'pysnptools>=0.3.2', 'fastlmm>=0.2.17', 'fastcluster'],
   )
 

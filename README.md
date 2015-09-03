@@ -11,7 +11,7 @@ See this website for related software:
 http://research.microsoft.com/en-us/um/redmond/projects/MSCompBio/
 
 Our documentation (including live examples) is available as ipython notebook:
-http://nbviewer.ipython.org/github/MicrosoftGenomics/GWAS_benchmark/blob/master/GWAS_benchmark/simulation.ipynb
+https://github.com/MicrosoftGenomics/GWAS_benchmark/blob/master/GWAS_benchmark/simulation.ipynb
 
 (To start ipython notebook locally, type `ipython notebook` at the command line.)
 
